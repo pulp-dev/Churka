@@ -15,16 +15,20 @@ def process(line):
 
 async def main():
     scraper = Scraper()
+    LAST_TABLE = "timetable02.03.pdf"
 
     async def pipeline():
         while True:
             flag = scraper.get_timetables_elements()
-            print(flag)
             if flag:
-                print('dfdf')
+                global LAST_TABLE
+                LAST_TABLE = flag
                 for user in ids:
-                    await bot.send_message(str(user), "Я чурка")
-            await asyncio.sleep(10)
+                    await bot.send_message(str(user), "Чурка старался")
+                    with open(f"TimeTables/{flag}", "rb") as doc:
+                        await bot.send_document(user, document=doc)
+
+            await asyncio.sleep(300)
 
     with open("users.txt") as f:
         ids = set()
@@ -35,7 +39,9 @@ async def main():
     # /start
     @dp.message_handler(commands=["start"])
     async def start(message: types.Message):
-        await message.answer('Hello')
+        await message.answer('Здрасти, хозяин! Я буду отправлять вам хасписание. А пока держите последнее:')
+        with open(f"TimeTables/{LAST_TABLE}", "rb") as doc:
+            await message.answer_document(doc)
         ids.add(message.chat.id)
         with open("users.txt", "w") as f:
             for i in ids:

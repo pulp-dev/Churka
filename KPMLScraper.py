@@ -19,11 +19,11 @@ class Scraper:
 
     @staticmethod
     def form_name():
-        d = (dt.date.today())# + dt.timedelta(days=1)).day
-        if d < 10:
+        d = (dt.date.today() + dt.timedelta(days=1)).day
+        if int(d) < 10:
             d = '0' + str(d)
-        m = (dt.date.today())# + dt.timedelta(days=1)).month
-        if m < 10:
+        m = (dt.date.today() + dt.timedelta(days=1)).month
+        if int(m) < 10:
             m = '0' + str(m)
         name = d + '.' + m + '.pdf'
         return name
@@ -41,9 +41,9 @@ class Scraper:
                 'url': el.get('href'),
             }
             if self.process_doc(doc):
-                print(f'timetable for {dt.datetime.today().date()} have been just saved')
-                return True
-        return False
+                print(f'timetable for {(dt.datetime.today()  + dt.timedelta(days=1)).date()} have been just saved')
+                return f"timetable{self.form_name()}"
+        return None
 
     def process_doc(self, doc):
         # valid grade
