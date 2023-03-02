@@ -27,7 +27,7 @@ async def main():
             flag = scraper.get_timetables_elements()
             if flag:
                 global LAST_TABLE
-                if not flag == LAST_TABLE:
+                if flag != LAST_TABLE:
                     LAST_TABLE = flag
                     ids = get_ids()
                     for user in ids:
@@ -44,9 +44,8 @@ async def main():
         with open(f"TimeTables/{LAST_TABLE}", "rb") as doc:
             await message.answer_document(doc)
         ids = get_ids()
-        ids.add(str(message.chat.id))
-        with open("users.txt", "w") as f:
-            for i in ids:
+        if message.chat.id not in ids:
+            with open("users.txt", "w") as f:
                 f.write(f"{str(i)}\n")
 
     #await dp.skip_updates()
