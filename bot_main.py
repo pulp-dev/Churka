@@ -6,35 +6,36 @@ from aiogram import Bot, Dispatcher, executor, types
 import os
 import asyncio
 from dotenv import load_dotenv
-import json
 
 
-def process(line):
-    lst = line.split(' ')
+LAST_TABLE = "timetable02.03.pdf"
 
 
 async def main():
     scraper = Scraper()
-    LAST_TABLE = "timetable02.03.pdf"
+
+    def get_ids():
+        with open("users.txt") as f:
+            ids = set()
+            cock = f.readlines()
+            for cum in cock:
+                ids.add(cum.strip())
+        return ids
 
     async def pipeline():
         while True:
             flag = scraper.get_timetables_elements()
             if flag:
                 global LAST_TABLE
-                LAST_TABLE = flag
-                for user in ids:
-                    await bot.send_message(str(user), "Чурка старался")
-                    with open(f"TimeTables/{flag}", "rb") as doc:
-                        await bot.send_document(user, document=doc)
+                if not flag == LAST_TABLE:
+                    LAST_TABLE = flag
+                    ids = get_ids()
+                    for user in ids:
+                        await bot.send_message(str(user), "Чурка старался")
+                        with open(f"TimeTables/{flag}", "rb") as doc:
+                            await bot.send_document(user, document=doc)
 
             await asyncio.sleep(300)
-
-    with open("users.txt") as f:
-        ids = set()
-        cock = f.readlines()
-        for cum in cock:
-            ids.add(cum.strip())
 
     # /start
     @dp.message_handler(commands=["start"])
@@ -42,7 +43,8 @@ async def main():
         await message.answer('Здрасти, хозяин! Я буду отправлять вам хасписание. А пока держите последнее:')
         with open(f"TimeTables/{LAST_TABLE}", "rb") as doc:
             await message.answer_document(doc)
-        ids.add(message.chat.id)
+        ids = get_ids()
+        ids.add(str(message.chat.id))
         with open("users.txt", "w") as f:
             for i in ids:
                 f.write(f"{str(i)}\n")
