@@ -43,11 +43,12 @@ async def main():
         await message.answer('Здрасти, хозяин! Я буду отправлять вам хасписание. А пока держите последнее:')
         with open(f"TimeTables/{LAST_TABLE}", "rb") as doc:
             await message.answer_document(doc)
+        new_id = message.chat.id
         ids = get_ids()
-        ids.add(message.chat.id)
-        with open("users.txt", "w") as f:
-            for i in ids:
-                f.write(f"{str(i)}\n")
+        if not (str(new_id) in ids):
+            with open("users.txt", "a") as f:
+                f.write(f"{str(new_id)}\n")
+            ids.add(new_id)
 
     #await dp.skip_updates()
     task1 = asyncio.create_task(dp.start_polling())
