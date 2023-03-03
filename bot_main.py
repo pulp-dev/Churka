@@ -44,8 +44,9 @@ async def main():
         with open(f"TimeTables/{LAST_TABLE}", "rb") as doc:
             await message.answer_document(doc)
         ids = get_ids()
-        if message.chat.id not in ids:
-            with open("users.txt", "w") as f:
+        ids.add(message.chat.id)
+        with open("users.txt", "w") as f:
+            for i in ids:
                 f.write(f"{str(i)}\n")
 
     #await dp.skip_updates()
