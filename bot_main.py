@@ -52,10 +52,8 @@ async def main():
         msg_id = message.chat.id
         ids = get_ids()
         if msg_id not in ids:
-            ids.add(str(message.chat.id))
-            with open(USERS_FILENAME, "w") as f:
-                for i in ids:
-                    f.write(f"{str(i)}\n")
+            with open(USERS_FILENAME, "a") as f:
+                f.write(f"{str(msg_id)}\n")
 
     await dp.skip_updates()
     task1 = asyncio.create_task(dp.start_polling())
