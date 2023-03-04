@@ -19,10 +19,14 @@ class Scraper:
 
     @staticmethod
     def form_name():
-        d = (dt.date.today() + dt.timedelta(days=1)).day
+        if dt.datetime.today().weekday() == 5:
+            delta = 2
+        else:
+            delta = 1
+        d = (dt.date.today() + dt.timedelta(days=delta)).day
         if int(d) < 10:
             d = '0' + str(d)
-        m = (dt.date.today() + dt.timedelta(days=1)).month
+        m = (dt.date.today() + dt.timedelta(days=delta)).month
         if int(m) < 10:
             m = '0' + str(m)
         name = d + '.' + m + '.pdf'

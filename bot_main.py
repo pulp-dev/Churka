@@ -48,6 +48,7 @@ async def main():
         await message.answer('Здрасти, хозяин! Я буду отправлять вам хасписание. А пока держите последнее:')
         with open(f"TimeTables/{LAST_TABLE}", "rb") as doc:
             await message.answer_document(doc)
+
         msg_id = message.chat.id
         ids = get_ids()
         if msg_id not in ids:
