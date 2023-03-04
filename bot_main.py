@@ -1,11 +1,10 @@
 from KPMLScraper import Scraper
-from config import BOT_TOKEN
 
 import logging
 from aiogram import Bot, Dispatcher, types
 import asyncio
-# import os
-# from dotenv import load_dotenv
+import os
+from dotenv import load_dotenv
 
 LAST_TABLE = "timetable02.03.pdf"
 USERS_FILENAME = "users.txt"
@@ -37,9 +36,9 @@ async def pipeline(scrapper, bot):
 
 
 async def main():
-    # load_dotenv("config.env")
-    # token = os.environ["TOKEN"]
-    bot = Bot(token=BOT_TOKEN)
+    load_dotenv("config.env")
+    token = os.environ["TOKEN"]
+    bot = Bot(token=token)
     dp = Dispatcher(bot)
     scrapper = Scraper()
 
