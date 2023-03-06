@@ -13,9 +13,18 @@ DOMAIN = 'https://kpml.ru'
 
 
 class Scraper:
-    def __init__(self):
-        self.r = requests.get(URL)
+    def __init__(self, last_name):
         self.DOMAIN = DOMAIN
+        self.URL = URL
+        self.last_name = last_name
+
+    def make_request(self):
+        try:
+            r = requests.get(self.URL, timeout=15)
+        except Exception:
+            print(f"Fail to establish connection with {self.URL}")
+            return None
+        return r
 
     @staticmethod
     def form_name():
@@ -33,9 +42,13 @@ class Scraper:
         return name
 
     def get_timetables_elements(self):
-        soup = BeautifulSoup(self.r.text, 'html.parser')
-        elements = soup.findAll("p", attrs={'style': re.compile("line-height: 16px;.*")})
-        return self.process_timetables_element(elements)
+        r = self.make_request()
+        if r:
+            soup = BeautifulSoup(r.text, 'html.parser')
+            elements = soup.findAll("p", attrs={'style': re.compile("line-height: 16px;.*")})
+            return self.process_timetables_element(elements)
+        else:
+            return None
 
     def process_timetables_element(self, elements):
         for _ in elements:
@@ -44,10 +57,16 @@ class Scraper:
                 'text': el.text,
                 'url': el.get('href'),
             }
+            self.valid_doc(doc["url"])
             if self.process_doc(doc):
                 print(f'timetable for {(dt.datetime.today()  + dt.timedelta(days=1)).date()} have been just saved')
                 return f"timetable{self.form_name()}"
         return None
+
+    def valid_doc(self, url):
+        name = url.split('/')[-1]
+        if name != self.last_name:
+            self.last_name = name
 
     def process_doc(self, doc):
         # valid grade

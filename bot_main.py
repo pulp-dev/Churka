@@ -6,7 +6,8 @@ import asyncio
 import os
 from dotenv import load_dotenv
 
-LAST_TABLE = "timetable02.03.pdf"
+LAST_TABLE = "timetable04.03.pdf"
+LAST_NAME = ""
 USERS_FILENAME = "users.txt"
 
 
@@ -24,7 +25,7 @@ async def pipeline(scrapper, bot):
         flag = scrapper.get_timetables_elements()
         if flag:
             global LAST_TABLE
-            if flag != LAST_TABLE:
+            if flag != LAST_TABLE or scrapper.last_name != LAST_NAME:
                 LAST_TABLE = flag
                 ids = get_ids()
                 for user in ids:
@@ -40,7 +41,7 @@ async def main():
     token = os.environ["TOKEN"]
     bot = Bot(token=token)
     dp = Dispatcher(bot)
-    scrapper = Scraper()
+    scrapper = Scraper(LAST_NAME)
 
     # /start
     @dp.message_handler(commands=["start"])
