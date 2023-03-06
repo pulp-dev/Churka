@@ -25,7 +25,9 @@ async def pipeline(scrapper, bot):
         flag = scrapper.get_timetables_elements()
         if flag:
             global LAST_TABLE
+            global LAST_NAME
             if flag != LAST_TABLE or scrapper.last_name != LAST_NAME:
+                LAST_NAME = scrapper.last_name
                 LAST_TABLE = flag
                 ids = get_ids()
                 for user in ids:
