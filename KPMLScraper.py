@@ -32,13 +32,14 @@ class Scraper:
             delta = 2
         else:
             delta = 1
+
         d = (dt.date.today() + dt.timedelta(days=delta)).day
         if int(d) < 10:
             d = '0' + str(d)
         m = (dt.date.today() + dt.timedelta(days=delta)).month
         if int(m) < 10:
             m = '0' + str(m)
-        name = d + '.' + m + '.pdf'
+        name = str(d) + '.' + str(m) + '.pdf'
         return name
 
     def get_timetables_elements(self):
@@ -52,7 +53,11 @@ class Scraper:
 
     def process_timetables_element(self, elements):
         for _ in elements:
-            el = _.findAll("a")[0]
+            try:
+                el = _.findAll("a")[0]
+            except IndexError:
+                # для заголовков
+                continue
             doc = {
                 'text': el.text,
                 'url': el.get('href'),
